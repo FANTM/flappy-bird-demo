@@ -280,9 +280,6 @@ async def main():
             # check for a mouse start
             if event.type == pygame.MOUSEBUTTONDOWN and not gstate.flying and not gstate.game_over:
                 gstate.flying = True
-        # check for a myo start
-        if gstate.myo_clicked and not gstate.flying and not gstate.game_over:
-            gstate.flying = True
 
         pygame.display.update()
 
