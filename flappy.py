@@ -51,7 +51,7 @@ class Bird(pygame.sprite.Sprite):
 
     def update(self):
 
-        if self.game_state.flying == True:
+        if self.game_state.flying:
             #apply gravity
             self.vel += 0.5
             if self.vel > 8:
@@ -59,7 +59,7 @@ class Bird(pygame.sprite.Sprite):
             if self.rect.bottom < 768:
                 self.rect.y += int(self.vel)
 
-        if self.game_state.game_over == False:
+        if not self.game_state.game_over:
             #jump
             if (pygame.mouse.get_pressed()[0] == 1 or gstate.myo_clicked) and not self.clicked:
                 self.clicked = True
@@ -235,9 +235,9 @@ async def main():
         if len(pipe_group) > 0:
             if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left\
                 and bird_group.sprites()[0].rect.right < pipe_group.sprites()[0].rect.right\
-                and gstate.pass_pipe == False:
+                and not gstate.pass_pipe:
                 gstate.pass_pipe = True
-            if gstate.pass_pipe == True:
+            if gstate.pass_pipe:
                 if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.right:
                     gstate.score += 1
                     gstate.pass_pipe = False
@@ -251,7 +251,7 @@ async def main():
             gstate.game_over = True
             gstate.flying = False
 
-        if gstate.flying == True and gstate.game_over == False:
+        if gstate.flying and not gstate.game_over:
             #generate new pipes
             time_now = pygame.time.get_ticks()
             if time_now - gstate.last_pipe > gparams.pipe_frequency:
@@ -269,7 +269,7 @@ async def main():
                 gstate.ground_scroll = 0
 
         #check for game over and reset
-        if gstate.game_over == True:
+        if gstate.game_over:
             if button.draw(screen):
                 gstate.game_over = False
                 reset_game(pipe_group, flappy)
@@ -277,8 +277,12 @@ async def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gstate.run = False
+            # check for a mouse start
             if event.type == pygame.MOUSEBUTTONDOWN and not gstate.flying and not gstate.game_over:
                 gstate.flying = True
+        # check for a myo start
+        if gstate.myo_clicked and not gstate.flying and not gstate.game_over:
+            gstate.flying = True
 
         pygame.display.update()
 
