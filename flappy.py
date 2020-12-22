@@ -139,7 +139,6 @@ def notify_callback(sender: int, data: bytearray):
     packet = alpha_packet.unpack_packet(data)
     myo_val = packet['myo']
     if myo_val > 100:
-        print('myo_click')
         gstate.myo_clicked = True
     else:
         gstate.myo_clicked = False
